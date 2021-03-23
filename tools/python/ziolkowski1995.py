@@ -36,7 +36,7 @@ mat_vac = mb.material("Vacuum")
 mb.material.add_to_library(mat_vac)
 
 # Ziolkowski active region material
-qm = mb.qm_desc_2lvl(1e24, 2 * math.pi * 2e14, 6.24e-11, 1.0e10, 1.0e10, -1.0)
+qm = mb.qm_desc_2lvl(1e24, 0, 2 * math.pi * 2e14, 6.24e-11, 1.0e10, 1.0e10, -1.0)
 mat_ar = mb.material("AR_Ziolkowski", qm)
 mb.material.add_to_library(mat_ar)
 

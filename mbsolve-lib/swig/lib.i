@@ -27,6 +27,7 @@
 %shared_ptr(mbsolve::ic_density)
 %shared_ptr(mbsolve::ic_density_const)
 %shared_ptr(mbsolve::ic_density_autosave)
+%shared_ptr(mbsolve::ic_density_random_2lvl)
 %shared_ptr(mbsolve::ic_field)
 %shared_ptr(mbsolve::ic_field_const)
 %shared_ptr(mbsolve::ic_field_autosave)
