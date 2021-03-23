@@ -49,7 +49,7 @@ relax_sop = mb.qm_lindblad_relaxation(rates, pure_deph)
 rho_init = mb.qm_operator([ 1, 0, 0 ])
 
 # quantum mechanical description
-qm = mb.qm_description(6e24, H, u, relax_sop)
+qm = mb.qm_description(6e24, 0, H, u, relax_sop)
 mat_ar = mb.material("AR_Song", qm)
 mb.material.add_to_library(mat_ar)
 
