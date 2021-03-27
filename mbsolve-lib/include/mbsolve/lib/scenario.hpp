@@ -273,6 +273,8 @@ private:
 
     real m_timestep_size;
 
+    real n_courant{ 0.5 };
+
     real m_gridpoint_size;
 
     real m_endtime;
@@ -448,6 +450,15 @@ public:
      * Sets initial conditions for polarization;
      */
     void set_ic_polarization(std::shared_ptr<ic_field> polarization_init);
+    /** 
+     *  Gets Courant number
+     */
+    real get_courant_number() const;
+
+    /**
+     * Sets Courant number
+     */
+    void set_courant_number(real c);
 };
 }
 
