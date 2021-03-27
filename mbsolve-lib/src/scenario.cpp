@@ -192,4 +192,16 @@ scenario::set_ic_polarization(std::shared_ptr<ic_field> polarization_init)
 {
     m_p_init = polarization_init;
 }
+
+real
+scenario::get_courant_number() const
+{
+    return n_courant;
+}
+
+void
+scenario::set_courant_number(real c)
+{
+    n_courant = c;
+}
 }

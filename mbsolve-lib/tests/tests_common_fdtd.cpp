@@ -117,7 +117,8 @@ TEST_CASE("FDTD params -- Nonzero device length, nonzero end time", "[FDTD]")
     REQUIRE(scen->get_gridpoint_size() == Approx(d_x));
 
     mbsolve::real velocity = 1.0 / sqrt(mbsolve::MU0 * mbsolve::EPS0);
-    mbsolve::real d_t = d_x / velocity;
+    mbsolve::real courant = 0.5;
+    mbsolve::real d_t = courant * d_x / velocity;
     unsigned int n_t = ceil(t_e / d_t) + 1;
     d_t = t_e / (n_t - 1);
 
