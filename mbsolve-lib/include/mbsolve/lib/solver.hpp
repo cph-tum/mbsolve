@@ -136,7 +136,7 @@ public:
     /**
      * Executes solver (empty).
      */
-    virtual void run() const = 0;
+    virtual void run() = 0;
 
     /**
      * Gets results.

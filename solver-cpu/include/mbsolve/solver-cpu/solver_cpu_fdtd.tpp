@@ -223,7 +223,7 @@ solver_cpu_fdtd<num_lvl, density_algo>::~solver_cpu_fdtd()
 
 template<unsigned int num_lvl, template<unsigned int> class density_algo>
 void
-solver_cpu_fdtd<num_lvl, density_algo>::run() const
+solver_cpu_fdtd<num_lvl, density_algo>::run()
 {
 #pragma omp parallel
     {
