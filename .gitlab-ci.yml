@@ -17,6 +17,20 @@ stages:
   before_script:
    - ./tools/ci/setup_runtime_debian.sh
 
+.build_image_intel_oneapi_docker: &build_image_intel_oneapi_docker_definition
+  tags:
+   - docker
+   - linux
+  before_script:
+   - ./tools/ci/setup_buildenv_intel.sh
+
+.runtime_image_intel_oneapi_docker: &runtime_image_intel_oneapi_docker_definition
+  tags:
+   - docker
+   - linux
+  before_script:
+   - ./tools/ci/setup_runtime_intel.sh
+
 .image_lrz_haswell: &image_lrz_haswell_definition
   tags:
    - linux
@@ -171,20 +185,27 @@ test-py-examples-clang:
    - build-clang
   <<: *test_definition_python_examples
 
-build-intel:
+build-intel-oneapi:
   variables:
     CMAKE_FLAGS: "-DCMAKE_C_COMPILER=icc -DCMAKE_CXX_COMPILER=icpc"
-  <<: *image_lrz_haswell_definition
+  image: intel/oneapi-hpckit:latest
+  <<: *build_image_intel_oneapi_docker_definition
   <<: *build_definition_make
 
 test-cpp-examples-intel:
-  <<: *image_lrz_haswell_definition
+  # only:
+  #  - master
+  image: intel/oneapi-hpckit:latest
+  <<: *runtime_image_intel_oneapi_docker_definition
   dependencies:
-   - build-intel
+   - build-intel-oneapi
   <<: *test_definition_cpp_examples
 
 test-py-examples-intel:
-  <<: *image_lrz_haswell_definition
+  # only:
+  #  - master
+  image: intel/oneapi-hpckit:latest
+  <<: *runtime_image_intel_oneapi_docker_definition
   dependencies:
-   - build-intel
+   - build-intel-oneapi
   <<: *test_definition_python_examples
