@@ -78,6 +78,11 @@ public:
     {
         return std::complex<real>(0, 0);
     }
+    
+    static inline real calc_bloch_ampl(const density& d)
+    {
+        return 0;
+    }
 
     static inline density get_density()
     {

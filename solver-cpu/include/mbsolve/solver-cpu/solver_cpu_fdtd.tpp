@@ -323,6 +323,10 @@ solver_cpu_fdtd<num_lvl, density_algo>::run()
                                 m_result_scratch[o_i + i - pos] =
                                     coherence.imag();
                             }
+                        } else if (t == record::type::bloch_amplitude) {
+                            m_result_scratch[o_r + i - pos] =
+                                density_algo<num_lvl>::calc_bloch_ampl(
+                                    m_d[i]);
                         } else {
                             /* TODO handle trouble */
                         }
