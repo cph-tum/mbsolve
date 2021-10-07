@@ -284,6 +284,11 @@ public:
         return cv_representation::calc_population<num_lvl, vec_len>(d, idx);
     }
 
+    static inline real calc_bloch_ampl(const density& d)
+    {
+        return std::sqrt(pow(d(1), 2) + pow(d(2), 2) + pow(d(3), 2));
+    }
+
     /*
      * Returns the coherence specified by \param row_idx and \param col_idx
      * (zero-based).

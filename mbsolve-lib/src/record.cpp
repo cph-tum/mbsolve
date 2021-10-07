@@ -44,6 +44,9 @@ record::record(const std::string& name, real interval, real position)
     case 'i':
         m_type = type::inversion;
         break;
+    case 'b':
+        m_type = type::bloch_amplitude;
+        break;
     default:
         throw std::invalid_argument("Unknown record type");
         break;

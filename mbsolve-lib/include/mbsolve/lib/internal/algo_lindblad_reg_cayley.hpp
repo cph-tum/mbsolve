@@ -300,6 +300,11 @@ public:
     {
         return d(ridx, cidx);
     }
+    
+    static inline real calc_bloch_ampl(const density& d)
+    {
+        return (1.0 + 4.0 * (d(1, 2) * d(2,1)).real() - 4.0 * (d(1,1) * d(2,2)).real());
+    }
 
     static inline density get_density(const qm_operator& op)
     {

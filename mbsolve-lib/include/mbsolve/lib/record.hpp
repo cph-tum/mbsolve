@@ -41,7 +41,8 @@ public:
         polar_dt,
         magnetic,
         density,
-        inversion
+        inversion,
+        bloch_amplitude
     };
 
 private:
