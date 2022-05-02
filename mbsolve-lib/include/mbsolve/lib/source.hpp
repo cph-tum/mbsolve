@@ -22,6 +22,10 @@
 #ifndef MBSOLVE_LIB_SOURCE_H
 #define MBSOLVE_LIB_SOURCE_H
 
+#include <algorithm>
+#include <complex>
+#include <iostream>
+#include <random>
 #include <string>
 #include <vector>
 #include <mbsolve/lib/types.hpp>
@@ -41,7 +45,7 @@ public:
         soft_source
     };
 
-protected:
+public:
     std::string m_name;
 
     /* amplitude */
@@ -198,7 +202,7 @@ public:
      * \param [in] n_t             Number of time step.
      */
     real calc_value(int n_t) const
-    {   
+    {
         real t = n_t * m_timestep_size;
         return 1 / std::cosh(m_beta * t - m_phase) *
             sin(2 * PI * m_freq * t - m_phase_sin);
@@ -272,5 +276,176 @@ public:
     }
 };
 
+// auto randomNumberBetween = [](int low, int high) {
+//     auto randomFunc =
+//         [distribution_ = std::uniform_int_distribution<int>(low, high),
+//          random_engine_ = std::mt19937{ std::random_device{}() }]() mutable
+//          {
+//             return std::complex<double>(
+//                 distribution_(random_engine_),
+//                 distribution_(random_engine_));
+//         };
+//     return randomFunc;
+// };
+
+class randomNumberBetween
+{
+public:
+    randomNumberBetween(real low, real high)
+      : random_engine_{ std::random_device{}() }, distribution_{ low, high }
+    {}
+    std::complex<real> operator()()
+    {
+        return std::complex<real>(
+            distribution_(random_engine_), distribution_(random_engine_));
+    }
+
+private:
+    std::mt19937 random_engine_;
+    std::normal_distribution<real> distribution_;
+};
+
+class density_blackbody_norm
+{
+private:
+    real m_temp;
+
+public:
+    density_blackbody_norm(real temp) : m_temp(temp) {}
+    real calc_value(real omega) const
+    {
+        return (6.0 * pow(HBAR, 2)) / (PI * pow(KB * m_temp, 2)) *
+            std::abs(omega) /
+            (exp((HBAR * std::abs(omega)) / (KB * m_temp)) - 1);
+    }
+};
+
+/**
+ * Thermal noise source.
+ * \ingroup MBSOLVE_LIB
+ */
+class thermal_noise : public source
+{
+private:
+    // real m_tau_sim;
+    // std::vector<real> m_omega;
+    // std::vector<std::complex<real> > m_rand_numbers;
+    // density_blackbody_norm m_dens_e;
+
+public:
+    real m_tau_sim, m_freq_max, m_freq_min, m_delta_freq;
+    std::vector<real> m_omega;
+    std::vector<std::complex<real> > m_rand_numbers;
+    density_blackbody_norm m_dens_e;
+    /**
+     * Constructs thermal noise source. The pulse is
+     * based on the white-noise spectrum.
+     *
+     * \param [in] name        Name of the source.
+     * \param [in] position    Position of the source (in meter).
+     * \param [in] source_type Source type.
+     * \param [in] delta       Amplitude \f$ A \f$ of the source.
+     * \param [in] temp        Temperature of blackbody.
+     */
+    thermal_noise(
+        const std::string& name,
+        real position,
+        type source_type,
+        real temp,
+        real tau_sim,
+        real delta_freq = 0.0,
+        real freq_max = 0.0,
+        real freq_min = 0.0)
+      : source(
+            name,
+            position,
+            source_type,
+            sqrt(2.0 / (6.0 * EPS0 * HBAR * 1.0 / sqrt(MU0 * EPS0))) * KB *
+                temp / std::sqrt(tau_sim),
+            0,
+            0),
+        m_dens_e(temp), m_tau_sim(tau_sim)
+    {
+        if (delta_freq < 1 / tau_sim) {
+            m_delta_freq = 1 / tau_sim;
+        } else {
+            m_delta_freq = delta_freq;
+        }
+        m_freq_max = freq_max;
+        if (freq_min < 1 / tau_sim) {
+            m_freq_min = 1 / tau_sim;
+        } else {
+            m_freq_min = freq_min;
+        }
+    }
+
+    /**
+     * Sets time step size.
+     */
+    void set_timestep_size(real timestep_size)
+    {
+        m_timestep_size = timestep_size;
+        int num_timesteps = ceil(m_tau_sim / timestep_size) + 1;
+        if (m_freq_max == 0.0) {
+            m_freq_max = 1 / (2 * m_timestep_size);
+        } else if (m_freq_max > 1 / (2 * m_timestep_size)) {
+            throw std::invalid_argument("Max frequency  has to be smaller "
+                                        "than 1 / (2 * m_timestep_size).");
+        }
+        m_rand_numbers.clear();
+        m_omega = get_omega();
+        std::generate_n(
+            std::back_inserter(m_rand_numbers),
+            num_timesteps / 2,
+            randomNumberBetween(0, 1));
+        std::vector<std::complex<real> > rand_numbers_flip = m_rand_numbers;
+        std::transform(
+            rand_numbers_flip.begin(),
+            rand_numbers_flip.end(),
+            rand_numbers_flip.begin(),
+            [](const std::complex<real> c) -> std::complex<real> {
+                return std::conj(c);
+            });
+
+        std::reverse(m_rand_numbers.begin(), m_rand_numbers.end());
+        m_rand_numbers.insert(
+            m_rand_numbers.begin(),
+            rand_numbers_flip.begin(),
+            rand_numbers_flip.end());
+    }
+
+    real calc_value(int n_t) const
+    {
+        if (n_t % 10000 == 0) {
+            std::cout << "Numt: " << n_t << std::endl;
+        }
+        std::complex<real> E = 0.0;
+        for (int i = 0; i < m_omega.size(); i++) {
+            real t = n_t * m_timestep_size;
+            E += m_rand_numbers[i] *
+                std::sqrt(m_dens_e.calc_value(std::abs(m_omega[i]))) *
+                exp(std::complex<real>(0, 1) * m_omega[i] * t);
+        }
+        return E.real();
+    }
+
+    std::vector<real> get_omega()
+    {
+        int ind_omega = std::floor(
+            (2 * PI * m_freq_max - 2 * PI * m_freq_min) /
+            (2 * PI * m_delta_freq));
+        std::vector<real> omega_i;
+        for (int i = ind_omega; i >= 0; i--) {
+            real omega =
+                -(1) * i * 2 * PI * m_delta_freq - 2 * PI * m_freq_min;
+            omega_i.push_back(omega);
+        }
+        for (int i = 0; i <= ind_omega; i++) {
+            real omega = i * 2 * PI * m_delta_freq + 2 * PI * m_freq_min;
+            omega_i.push_back(omega);
+        }
+        return omega_i;
+    }
+};
 }
 #endif
