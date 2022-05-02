@@ -47,6 +47,7 @@
 %shared_ptr(mbsolve::single_cycle_pulse)
 %shared_ptr(mbsolve::solver)
 %shared_ptr(mbsolve::source)
+%shared_ptr(mbsolve::thermal_noise)
 %shared_ptr(mbsolve::writer)
 %shared_ptr(mbsolve::reader)
 
