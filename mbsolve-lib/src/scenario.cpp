@@ -119,6 +119,9 @@ void
 scenario::set_timestep_size(real value)
 {
     m_timestep_size = value;
+    for (const auto& src : m_sources) {
+        src->set_timestep_size(value);
+    }
 }
 
 real
