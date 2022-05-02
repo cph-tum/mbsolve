@@ -276,7 +276,6 @@ public:
     }
 };
 
-
 class randomNumberBetween
 {
 public:
@@ -316,7 +315,6 @@ public:
 class thermal_noise : public source
 {
 private:
-
 public:
     real m_tau_sim, m_freq_max, m_freq_min, m_delta_freq;
     std::vector<real> m_omega;
