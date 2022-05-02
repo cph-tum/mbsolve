@@ -97,8 +97,7 @@ public:
     explicit ic_density_autosave(
         const std::vector<std::shared_ptr<qm_operator> > rho)
       : m_rho(rho)
-    {
-    }
+    {}
 
     /**
      * Returns initial density matrix at index i.
@@ -208,8 +207,7 @@ public:
      */
     explicit ic_field_autosave(const std::vector<real>& field)
       : m_field(field)
-    {
-    }
+    {}
 
     /**
      * Returns initial field value at index i.
@@ -450,7 +448,7 @@ public:
      * Sets initial conditions for polarization;
      */
     void set_ic_polarization(std::shared_ptr<ic_field> polarization_init);
-    /** 
+    /**
      *  Gets Courant number
      */
     real get_courant_number() const;

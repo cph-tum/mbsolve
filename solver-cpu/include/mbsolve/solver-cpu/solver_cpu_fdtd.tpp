@@ -195,8 +195,7 @@ solver_cpu_fdtd<num_lvl, density_algo>::solver_cpu_fdtd(
 
         /* calculate source values */
         for (unsigned int j = 0; j < scen->get_num_timesteps(); j++) {
-            m_source_data[base_idx + j] =
-                src->get_value(j * scen->get_timestep_size());
+            m_source_data[base_idx + j] = src->get_value(j);
         }
 
         base_idx += scen->get_num_timesteps();

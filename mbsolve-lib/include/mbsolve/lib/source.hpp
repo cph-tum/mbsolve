@@ -61,6 +61,8 @@ protected:
 
     type m_type;
 
+    real m_timestep_size;
+
 public:
     /**
      * Constructs source.
@@ -88,13 +90,13 @@ public:
     /**
      * Gets source value at certain \p time value.
      *
-     * \param [in] t             Time value.
+     * \param [in] n_t             Number of time step.
      * \param [in] current_value Reserved for later use.
      */
-    real get_value(real t, real current_value = 0.0) const
+    real get_value(int n_t, real current_value = 0.0) const
     {
         /* calculate source value */
-        real val = m_ampl * calc_value(t);
+        real val = m_ampl * calc_value(n_t);
 
         /* if type == thevenin, consider internal resistance */
 
@@ -106,7 +108,7 @@ public:
     }
 
     /* calculate new value */
-    virtual real calc_value(real /* t */) const { return 0.0; }
+    virtual real calc_value(int /* n_t */) const { return 0.0; }
 
     /**
      * Gets source position.
@@ -125,6 +127,14 @@ public:
     */
     /* TODO: add source type: hard, soft, thevenin */
     /* TODO: for thevenin: add internal resistance */
+
+    /**
+     * Sets time step size.
+     */
+    virtual void set_timestep_size(real timestep_size)
+    {
+        m_timestep_size = timestep_size;
+    }
 };
 /*
 class sine_source : public source
@@ -185,10 +195,11 @@ public:
     /**
      * Gets source value at certain \p time value.
      *
-     * \param [in] t             Time value.
+     * \param [in] n_t             Number of time step.
      */
-    real calc_value(real t) const
-    {
+    real calc_value(int n_t) const
+    {   
+        real t = n_t * m_timestep_size;
         return 1 / std::cosh(m_beta * t - m_phase) *
             sin(2 * PI * m_freq * t - m_phase_sin);
     }
@@ -253,14 +264,13 @@ public:
       : source(name, position, source_type, ampl, freq, phase), m_tau(tau)
     {}
 
-    real calc_value(real t) const
+    real calc_value(int n_t) const
     {
+        real t = n_t * m_timestep_size;
         return exp(-(t - m_phase) * (t - m_phase) / (m_tau * m_tau)) *
             sin(2 * PI * m_freq * t);
     }
 };
 
-/* TODO: custom functor source / callback function? */
 }
-
 #endif
