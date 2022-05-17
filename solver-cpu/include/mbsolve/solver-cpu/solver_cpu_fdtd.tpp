@@ -193,6 +193,7 @@ solver_cpu_fdtd<num_lvl, density_algo>::solver_cpu_fdtd(
         s.data_base_idx = base_idx;
         m_sim_sources.push_back(s);
 
+#pragma omp parallel for schedule(static)
         /* calculate source values */
         for (unsigned int j = 0; j < scen->get_num_timesteps(); j++) {
             m_source_data[base_idx + j] = src->get_value(j);
