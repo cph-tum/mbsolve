@@ -20,6 +20,10 @@
  */
 
 #include <H5Cpp.h>
+#include <highfive/H5DataSet.hpp>
+#include <highfive/H5DataSpace.hpp>
+#include <highfive/H5Easy.hpp>
+#include <highfive/H5File.hpp>
 #include <mbsolve/writer-hdf5/writer_hdf5.hpp>
 
 namespace mbsolve {
@@ -39,39 +43,45 @@ writer_hdf5::write(
     auto h5_bool = H5::PredType::NATIVE_HBOOL;
 
     /* create file */
-    H5::H5File file(filename, H5F_ACC_TRUNC);
+    HighFive::File file(
+        filename, HighFive::File::ReadWrite | HighFive::File::Truncate);
 
-    /* attribute dimensions */
-    H5::DataSpace space_scalar;
+    /* create group for simulation setup */
+    file.createGroup("setup");
 
-    /* attribute time step size -- global */
-    H5::Attribute a_timestep =
-        file.createAttribute("timestep_size", h5_dbl, space_scalar);
-    double timestep = scen->get_timestep_size();
-    a_timestep.write(h5_dbl, &timestep);
+    /* create dataset for simulation scenario */
+    auto scenario = file.createDataSet("/setup/scenario", scen->get_name());
 
-    /* attribute grid point size -- global */
-    H5::Attribute a_gridpoint =
-        file.createAttribute("gridpoint_size", h5_dbl, space_scalar);
-    double gridpoint = scen->get_gridpoint_size();
-    a_gridpoint.write(h5_dbl, &gridpoint);
+    /* attribute time step size */
+    H5Easy::dumpAttribute(
+        file, "/setup/scenario", "timestep_size", scen->get_timestep_size());
 
-    /* attribute simulation end time -- global */
-    H5::Attribute a_endtime =
-        file.createAttribute("sim_endtime", h5_dbl, space_scalar);
-    double endtime = scen->get_endtime();
-    a_endtime.write(h5_dbl, &endtime);
+    /* attribute grid point size */
+    H5Easy::dumpAttribute(
+        file,
+        "/setup/scenario",
+        "gridpoint_size",
+        scen->get_gridpoint_size());
 
-    /* attribute grid point size -- global */
-    H5::Attribute a_dev_length =
-        file.createAttribute("dev_length", h5_dbl, space_scalar);
-    double dev_length = dev->get_length();
-    a_dev_length.write(h5_dbl, &dev_length);
+    // /* attribute simulation end time */
+    H5Easy::dumpAttribute(
+        file, "/setup/scenario", "sim_endtime", scen->get_endtime());
 
+    /* create dataset for simulation device */
+    auto device = file.createDataSet("/setup/device", dev->get_name());
+
+    /* attribute grid point size */
+    H5Easy::dumpAttribute(
+        file, "/setup/device", "dev_length", dev->get_length());
+
+    /* Add names of device regions */
+
+    for (auto region : dev->get_regions()) {
+    }
     /* results */
     for (auto result : results) {
         /* create group for result */
-        H5::Group g = file.createGroup(result->get_name());
+        HighFive::Group g = file.createGroup(result->get_name());
 
         /* attribute time interval -- per result */
         /* TODO
@@ -85,26 +95,25 @@ writer_hdf5::write(
         /* TODO */
 
         /* attribute is complex ? -- per result */
-        H5::Attribute a_is_complex =
-            g.createAttribute("is_complex", h5_bool, space_scalar);
-        hbool_t is_complex = result->is_complex();
-        a_is_complex.write(h5_bool, &is_complex);
-
-        /* dataset dimensions */
-        const int rank = 2;
-        hsize_t dims[rank];
-        dims[0] = result->get_rows();
-        dims[1] = result->get_cols();
-        H5::DataSpace dataspace(rank, dims);
+        bool is_complex = result->is_complex();
+        HighFive::Attribute a_is_complex =
+            g.createAttribute("is_complex", is_complex);
+        a_is_complex.write(is_complex);
 
         /* write real part */
-        H5::DataSet d_real = g.createDataSet("real", h5_dbl, dataspace);
-        d_real.write(result->get_data_real().data(), h5_dbl);
+        std::vector<size_t> dims{ result->get_rows(), result->get_cols() };
+        auto data_real = result->get_data_real().data();
+
+        HighFive::DataSet d_real =
+            g.createDataSet<double>("real", HighFive::DataSpace(dims));
+        d_real.write_raw(data_real);
 
         /* write imag part */
         if (is_complex) {
-            H5::DataSet d_imag = g.createDataSet("imag", h5_dbl, dataspace);
-            d_imag.write(result->get_data_imag().data(), h5_dbl);
+            auto data_imag = result->get_data_imag().data();
+            HighFive::DataSet d_imag =
+                g.createDataSet<double>("imag", HighFive::DataSpace(dims));
+            d_imag.write_raw(data_imag);
         }
     }
 }

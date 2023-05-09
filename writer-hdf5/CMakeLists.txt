@@ -37,7 +37,7 @@ target_include_directories(writer-hdf5 PRIVATE ${HDF5_INCLUDE_DIRS})
 target_include_directories(writer-hdf5 PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-target_link_libraries(writer-hdf5 PRIVATE mbsolve-lib ${HDF5_LIBRARIES})
+target_link_libraries(writer-hdf5 PRIVATE mbsolve-lib ${HDF5_LIBRARIES} HighFive)
 
 if(MBSOLVE_PYTHON)
   set_property(SOURCE swig/writerhdf5.i PROPERTY CPLUSPLUS ON)

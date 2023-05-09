@@ -119,6 +119,7 @@ list(APPEND ALL_SOURCE_FILES ${LIB_SOURCE_FILES})
 # HDF support?
 if(WITH_HDF5)
   find_package(HDF5 COMPONENTS C CXX)
+  find_package(HighFive REQUIRED)
   if(HDF5_FOUND)
     set(MBSOLVE_HDF5 TRUE)
     add_subdirectory(writer-hdf5)

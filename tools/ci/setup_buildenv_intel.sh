@@ -22,3 +22,9 @@ git clone https://github.com/jarro2783/cxxopts.git && cd cxxopts && \
 git clone https://gitlab.com/libeigen/eigen.git && cd eigen && \
   git checkout 3.3.7 && cmake -Bbuild -H. -DBUILD_TESTING=OFF && \
   cmake --build build/ --target install && cd ..
+
+# HighFive library
+git clone https://github.com/BlueBrain/HighFive.git && cd HighFive && \
+  git checkout v2.7.1 && cmake -Bbuild -H. -DHIGHFIVE_EXAMPLES=OFF \
+   -DHIGHFIVE_UNIT_TESTS=Off -DHIGHFIVE_USE_BOOST=Off && \
+  cmake --build build/ --target install && cd ..

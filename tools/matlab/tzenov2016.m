@@ -27,11 +27,11 @@ close all;
 [filename, folder] = uigetfile('../../*.hdf', 'Select result data');
 f = fullfile(folder, filename);
 
-% read global attributes
-d_x = h5readatt(f, '/', 'gridpoint_size');
-d_t = h5readatt(f, '/', 'timestep_size');
-t_e = h5readatt(f, '/', 'sim_endtime');
-L_x = h5readatt(f, '/', 'dev_length');
+% read setup and device attributes
+d_x_DFG = h5readatt(f_DFG, '/setup/scenario', 'gridpoint_size');
+d_t_DFG = h5readatt(f_DFG, '/setup/scenario', 'timestep_size');
+t_e_DFG = h5readatt(f_DFG, '/setup/scenario', 'sim_endtime');
+L_x_DFG = h5readatt(f_DFG, '/setup/device', 'dev_length');
 
 % complete grid
 x = 0:d_x:L_x;
