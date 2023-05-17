@@ -294,6 +294,15 @@ public:
     }
 
     /*
+     * Converts the density matrix in coherence vector
+     * representation into density matrix \param op.
+     */
+    static inline qm_operator convert_density(const density& d)
+    {
+        return cv_representation::density_matrix<num_lvl, vec_len>(d);
+    }
+
+    /*
      * Returns a zero coherence vector (for initialization purposes only).
      */
     static inline density get_density() { return density::Zero(); }

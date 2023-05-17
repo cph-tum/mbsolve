@@ -83,6 +83,11 @@ public:
     {
         return get_density();
     }
+
+        static inline qm_operator convert_density(const density& d)
+    {
+        return qm_operator({0});
+    }
 };
 }
 

@@ -289,7 +289,7 @@ public:
     template<unsigned int num_lvl, unsigned int num_adj>
     static real calc_population(
         const Eigen::Matrix<real, num_adj, 1>& d,
-        unsigned int m)
+        int m)
     {
         /* TODO d.size() instead of template param? */
 
@@ -335,17 +335,47 @@ public:
         }
     }
 
-     /**
+    /**
      * Calculates off_diagonal element \f$ \rho_{m} \f$ in linear indexing
      * for a given coherence vector \param d and index \param m.
      */
     template<unsigned int num_lvl, unsigned int num_adj>
     static std::complex<real> calc_off_diag(
         const Eigen::Matrix<real, num_adj, 1>& d,
-        unsigned int m)
+        int m)
     {
         int m_imag = m + (num_lvl * (num_lvl - 1)) / 2;
         return std::complex<real>(0.5 * d(m), -0.5 * d(m_imag));
+    }
+
+    /**
+     * Determines density matrix from coherent vector representation
+     * \param d.
+     */
+    template<unsigned int num_lvl, unsigned int num_adj>
+    static qm_operator density_matrix(
+        const Eigen::Matrix<real, num_adj, 1>& d)
+    {
+        std::vector<real> main_diag;
+        main_diag.reserve(num_lvl);
+        std::vector<std::complex<real> > off_diag;
+        int num_off = (num_lvl * (num_lvl - 1)) / 2;
+        off_diag.reserve(num_off);
+
+        /* off diagonal terms */
+        for (int i = 0; i < num_off; i++) {
+            std::complex<real> elem_off_diag =
+                cv_representation::calc_off_diag<num_lvl, num_adj>(d, i);
+            off_diag.push_back(elem_off_diag);
+        }
+        /* main diagonal terms */
+        for (int i = 0; i < num_lvl; i++) {
+            real elem_main_diag =
+                cv_representation::calc_population<num_lvl, num_adj>(d, i);
+            main_diag.push_back(elem_main_diag);
+        }
+
+        return qm_operator(main_diag, off_diag);
     }
 
     /**
@@ -360,16 +390,14 @@ public:
         unsigned int i = 0;
 
         /* real part terms */
-        for (int j = 0; j < d.get_off_diagonal().size();
-             j++) {
+        for (int j = 0; j < d.get_off_diagonal().size(); j++) {
 
             ret(j) = 2 * d.get_off_diagonal()[j].real();
         }
 
         /* imag part terms */
         i = (num_lvl * (num_lvl - 1)) / 2;
-        for (int j = 0; j < d.get_off_diagonal().size();
-             j++) {
+        for (int j = 0; j < d.get_off_diagonal().size(); j++) {
 
             ret(i) = -2 * d.get_off_diagonal()[j].imag();
             i++;

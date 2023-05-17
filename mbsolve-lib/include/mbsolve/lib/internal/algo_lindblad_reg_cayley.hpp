@@ -120,6 +120,35 @@ public:
         return op_mat;
     }
 
+    static inline qm_operator convert_density(const density& d)
+    {
+        /* main diagonal elements */
+        std::vector<real> main_diag;
+        main_diag.reserve(num_lvl);
+        for (int i = 0; i < num_lvl; i++) {
+            main_diag.push_back(d(i, i).real());
+        }
+        /* off-diagonal elements */
+        std::vector<std::complex<real> > off_diag;
+        off_diag.reserve(num_lvl * (num_lvl - 1) / 2);
+        for (int i = 0, row = 0, col = 1;
+             (row < num_lvl) && (col < num_lvl);
+             i++) {
+
+            /* top half */
+            off_diag.push_back(d(row, col));
+
+            if (row == col - 1) {
+                row = 0;
+                col++;
+            } else {
+                row++;
+            }
+        }
+
+        return qm_operator(main_diag, off_diag);
+    }
+
     static inline sim_constants get_qm_constants(
         std::shared_ptr<const qm_description> qm,
         real time_step)
