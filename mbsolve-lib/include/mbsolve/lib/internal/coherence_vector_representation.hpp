@@ -347,32 +347,19 @@ public:
         unsigned int i = 0;
 
         /* real part terms */
-        for (int j = 0, row = 0, col = 1; j < d.get_off_diagonal().size();
+        for (int j = 0; j < d.get_off_diagonal().size();
              j++) {
 
-            ret(i) = 2 * d.get_off_diagonal()[j].real();
-
-            if (row == col - 1) {
-                row = 0;
-                col++;
-            } else {
-                row++;
-            }
+            ret(j) = 2 * d.get_off_diagonal()[j].real();
         }
 
         /* imag part terms */
         i = (num_lvl * (num_lvl - 1)) / 2;
-        for (int j = 0, row = 0, col = 1; j < d.get_off_diagonal().size();
+        for (int j = 0; j < d.get_off_diagonal().size();
              j++) {
 
             ret(i) = -2 * d.get_off_diagonal()[j].imag();
-
-            if (row == col - 1) {
-                row = 0;
-                col++;
-            } else {
-                row++;
-            }
+            i++;
         }
 
         /* population terms */
