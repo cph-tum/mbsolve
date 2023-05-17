@@ -335,6 +335,19 @@ public:
         }
     }
 
+     /**
+     * Calculates off_diagonal element \f$ \rho_{m} \f$ in linear indexing
+     * for a given coherence vector \param d and index \param m.
+     */
+    template<unsigned int num_lvl, unsigned int num_adj>
+    static std::complex<real> calc_off_diag(
+        const Eigen::Matrix<real, num_adj, 1>& d,
+        unsigned int m)
+    {
+        int m_imag = m + (num_lvl * (num_lvl - 1)) / 2;
+        return std::complex<real>(0.5 * d(m), -0.5 * d(m_imag));
+    }
+
     /**
      * Determines coherence vector for given density matrix \param d.
      */
