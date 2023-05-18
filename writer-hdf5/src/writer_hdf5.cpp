@@ -118,6 +118,46 @@ writer_hdf5::write(
     }
 }
 
+void
+writer_hdf5::autosave(
+    const std::string& filename,
+    const std::shared_ptr<sim_data>& sim_data,
+    std::shared_ptr<const device> dev,
+    std::shared_ptr<const scenario> scen) const
+{
+    /* create file */
+    HighFive::File file(
+        filename, HighFive::File::ReadWrite | HighFive::File::Truncate);
+
+    /* write e-field components*/
+    HighFive::DataSet dataset_e = file.createDataSet<real>(
+        "m_e", HighFive::DataSpace::From(sim_data->m_e_save));
+    dataset_e.write(sim_data->m_e_save);
+    /* write h-field components*/
+    HighFive::DataSet dataset_h = file.createDataSet<real>(
+        "m_h", HighFive::DataSpace::From(sim_data->m_h_save));
+    dataset_h.write(sim_data->m_h_save);
+    /* write p-field components*/
+    HighFive::DataSet dataset_p = file.createDataSet<real>(
+        "m_p", HighFive::DataSpace::From(sim_data->m_p_save));
+    dataset_p.write(sim_data->m_p_save);
+    /* write df-field components*/
+    // HighFive::DataSet dataset_df =
+    //     file.createDataSet<real>("m_df",
+    //     HighFive::DataSpace::From(sim_data->m_df_save));
+    // dataset_df.write(sim_data->m_df_save);
+    /* write density matrix*/
+    H5Easy::dump(file, "/density/num_gridpoints", sim_data->m_d_save.size());
+    for (int i = 0; i < sim_data->m_d_save.size(); i++) {
+        auto main_diag = sim_data->m_d_save[i].get_main_diagonal();
+        auto off_diag = sim_data->m_d_save[i].get_off_diagonal();
+        H5Easy::dump(
+            file, "/density/" + std::to_string(i) + "/main_diag", main_diag);
+        H5Easy::dump(
+            file, "/density/" + std::to_string(i) + "/off_diag", off_diag);
+    }
+}
+
 writer_hdf5_loader::writer_hdf5_loader()
 {
     writer::register_writer<writer_hdf5>("hdf5");

@@ -56,6 +56,15 @@ public:
         const std::vector<std::shared_ptr<result> >& results,
         std::shared_ptr<const device> dev,
         std::shared_ptr<const scenario> scen) const;
+
+    /**
+     * Autosave of simulation data to HDF5 file.
+     */
+    void autosave(
+        const std::string& file,
+        const std::shared_ptr<sim_data>& sim_data,
+        std::shared_ptr<const device> dev,
+        std::shared_ptr<const scenario> scen) const;
 };
 
 /**

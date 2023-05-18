@@ -28,6 +28,7 @@
 #include <string>
 #include <vector>
 #include <mbsolve/lib/device.hpp>
+#include <mbsolve/lib/qm_description.hpp>
 #include <mbsolve/lib/result.hpp>
 #include <mbsolve/lib/scenario.hpp>
 #include <mbsolve/lib/types.hpp>
@@ -115,6 +116,20 @@ public:
     virtual void write(
         const std::string& file,
         const std::vector<std::shared_ptr<result> >& results,
+        std::shared_ptr<const device> dev,
+        std::shared_ptr<const scenario> scen) const = 0;
+
+    /**
+     * Writes autosave of simulation data to a \p file.
+     *
+     * \param [in] file     Filename.
+     * \param [in] sim_data  Simulation data to be written.
+     * \param [in] dev       Device that was simulated.
+     * \param [in] scenario  Scenario that was used.
+     */
+    virtual void autosave(
+        const std::string& file,
+        const std::shared_ptr<sim_data>& sim_data,
         std::shared_ptr<const device> dev,
         std::shared_ptr<const scenario> scen) const = 0;
 };
