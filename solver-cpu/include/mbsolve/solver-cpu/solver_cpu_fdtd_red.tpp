@@ -564,6 +564,59 @@ solver_cpu_fdtd_red<num_lvl, density_algo>::run() const
             std::copy(di, di + cle.get_size(), cle.get_result_imag(0, 0));
         }
     }
+
+    /* Save simulation data for the last roundtrip*/
+    m_sim_data->m_h_save.reserve(num_gridpoints + 1);
+    for (int i = 0; i < P; i++) {
+        uint64_t chunk = chunk_base;
+        if (i == P - 1) {
+            chunk += chunk_rem + 1;
+        }
+        for (int j = 0; j < chunk; j++) {
+            m_sim_data->m_h_save.push_back(m_h[i][OL + j]);
+        }
+    }
+    m_sim_data->m_e_save.reserve(num_gridpoints + 1);
+    for (int i = 0; i < P; i++) {
+        uint64_t chunk = chunk_base;
+        if (i == P - 1) {
+            chunk += chunk_rem;
+        }
+        for (int j = 0; j < chunk; j++) {
+            m_sim_data->m_e_save.push_back(m_e[i][OL + j]);
+        }
+    }
+    m_sim_data->m_p_save.reserve(num_gridpoints + 1);
+    for (int i = 0; i < P; i++) {
+        uint64_t chunk = chunk_base;
+        if (i == P - 1) {
+            chunk += chunk_rem;
+        }
+        for (int j = 0; j < chunk; j++) {
+            m_sim_data->m_p_save.push_back(m_p[i][OL + j]);
+        }
+    }
+    // m_sim_data->m_df_save.reserve(num_gridpoints);
+    // for (int i = 0; i < P; i++) {
+    //     for (int j = 0; j < chunk_base; j++) {
+    //         uint64_t chunk = chunk_base;
+    //         if (i == P - 1) {
+    //             chunk += chunk_rem;
+    //         }
+    //         m_sim_data->m_df_save.push_back(m_df[i][OL + j]);
+    //     }
+    // }
+    m_sim_data->m_d_save.reserve(num_gridpoints + 1);
+    for (int i = 0; i < P; i++) {
+        uint64_t chunk = chunk_base;
+        if (i == P - 1) {
+            chunk += chunk_rem;
+        }
+        for (int j = 0; j < chunk; j++) {
+            m_sim_data->m_d_save.push_back(
+                density_algo<num_lvl>::convert_density(m_d[i][OL + j]));
+        }
+    }
 }
 }
 

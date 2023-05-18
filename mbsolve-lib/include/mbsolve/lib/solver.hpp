@@ -73,6 +73,9 @@ protected:
     /* simulation results */
     std::vector<std::shared_ptr<result> > m_results;
 
+    /* simulation data to be autosaved*/
+    std::shared_ptr<sim_data> m_sim_data;
+
 public:
     /**
      * Destructs solver.
@@ -139,6 +142,11 @@ public:
      * Gets results.
      */
     const std::vector<std::shared_ptr<result> >& get_results() const;
+
+    /**
+     * Gets simulation data.
+     */
+    const std::shared_ptr<sim_data>& get_sim_data() const;
 };
 }
 

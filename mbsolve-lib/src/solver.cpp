@@ -52,7 +52,9 @@ solver::solver(
     std::shared_ptr<const device> dev,
     std::shared_ptr<scenario> scen)
   : m_name(name), m_device(dev), m_scenario(scen)
-{}
+{
+    m_sim_data = std::make_shared<sim_data>();
+}
 
 solver::~solver() {}
 
@@ -78,6 +80,12 @@ const std::vector<std::shared_ptr<result> >&
 solver::get_results() const
 {
     return m_results;
+}
+
+const std::shared_ptr<sim_data>&
+solver::get_sim_data() const
+{
+    return m_sim_data;
 }
 
 std::vector<std::string>

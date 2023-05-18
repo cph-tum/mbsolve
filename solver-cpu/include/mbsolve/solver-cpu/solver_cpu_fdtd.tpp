@@ -335,6 +335,32 @@ solver_cpu_fdtd<num_lvl, density_algo>::run() const
             std::copy(di, di + cle.get_size(), cle.get_result_imag(0, 0));
         }
     }
+    /* Save simulation data for the last roundtrip*/
+    m_sim_data->m_h_save.resize(m_scenario->get_num_gridpoints() + 1);
+    std::copy(
+        m_h,
+        m_h + m_scenario->get_num_gridpoints(),
+        m_sim_data->m_h_save.begin());
+    m_sim_data->m_e_save.resize(m_scenario->get_num_gridpoints());
+    std::copy(
+        m_e,
+        m_e + m_scenario->get_num_gridpoints() - 1,
+        m_sim_data->m_e_save.begin());
+    m_sim_data->m_p_save.resize(m_scenario->get_num_gridpoints());
+    std::copy(
+        m_p,
+        m_p + m_scenario->get_num_gridpoints() - 1,
+        m_sim_data->m_p_save.begin());
+    // // std::copy(
+    // //     m_df,
+    // //     m_df + m_scenario->get_num_gridpoints() - 1,
+    // //     m_sim_data_fdtd->m_df_save.begin());
+    // std::vector<qm_operator> m_d_qm;
+    m_sim_data->m_d_save.reserve(m_scenario->get_num_gridpoints());
+    for (int i = 0; i < m_scenario->get_num_gridpoints(); i++) {
+        m_sim_data->m_d_save.push_back(
+            density_algo<num_lvl>::convert_density(m_d[i]));
+    }
 }
 }
 

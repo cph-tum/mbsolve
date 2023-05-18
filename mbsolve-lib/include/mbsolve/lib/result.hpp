@@ -24,6 +24,7 @@
 
 #include <stdexcept>
 #include <vector>
+#include <mbsolve/lib/qm_description.hpp>
 #include <mbsolve/lib/types.hpp>
 
 namespace mbsolve {
@@ -117,6 +118,32 @@ public:
     const std::vector<real>& get_data_imag() const { return m_imag; }
 
     std::vector<std::complex<real> > get_data_complex() const;
+};
+
+/**
+ * This class stores the simulation values of one simulation run.
+ * \ingroup MBSOLVE_LIB_INT
+ */
+class sim_data
+{
+public:
+    /* h-field component */
+    std::vector<real> m_h_save;
+    /* e-field component */
+    std::vector<real> m_e_save;
+    /* p-field component */
+    std::vector<real> m_p_save;
+    /* df-field component */
+    // std::vector<real> m_df_save;
+    /* density matrix*/
+    std::vector<qm_operator> m_d_save;
+
+    /**
+     * Constructs sim_data.
+     */
+    explicit sim_data() : m_h_save(), m_e_save(), m_p_save(), m_d_save() {}
+
+    ~sim_data() {}
 };
 }
 
