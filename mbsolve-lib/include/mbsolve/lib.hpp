@@ -44,6 +44,8 @@
 #include <mbsolve/lib/source.hpp>
 #include <mbsolve/lib/types.hpp>
 #include <mbsolve/lib/writer.hpp>
+#include <mbsolve/lib/reader.hpp>
+
 
 /**
  * \defgroup MBSOLVE_LIB_INT mbsolve-lib-internal

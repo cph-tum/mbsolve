@@ -45,6 +45,7 @@
 %shared_ptr(mbsolve::solver)
 %shared_ptr(mbsolve::source)
 %shared_ptr(mbsolve::writer)
+%shared_ptr(mbsolve::reader)
 
 %include "../include/mbsolve/lib/types.hpp"
 
@@ -56,6 +57,7 @@
 %template(vector_result) std::vector<std::shared_ptr<mbsolve::result> >;
 %template(matrix_real_d) std::vector<std::vector<double> >;
 %template(matrix_real_f) std::vector<std::vector<float> >;
+%template(vector_qm_operator) std::vector<std::shared_ptr<mbsolve::qm_operator> >;
 
 %feature("python:cdefaultargs") mbsolve::device::device;
 %feature("python:cdefaultargs") mbsolve::material::material;
@@ -70,3 +72,4 @@
 %include "../include/mbsolve/lib/scenario.hpp"
 %include "../include/mbsolve/lib/solver.hpp"
 %include "../include/mbsolve/lib/writer.hpp"
+%include "../include/mbsolve/lib/reader.hpp"
