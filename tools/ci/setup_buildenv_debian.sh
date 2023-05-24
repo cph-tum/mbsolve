@@ -50,3 +50,9 @@ git clone https://github.com/BlueBrain/HighFive.git && cd HighFive && \
   git checkout v2.7.1 && cmake -Bbuild -H. -DHIGHFIVE_EXAMPLES=OFF \
    -DHIGHFIVE_UNIT_TESTS=Off -DHIGHFIVE_USE_BOOST=Off && \
   cmake --build build/ --target install && cd ..
+
+# EigenRand library
+git clone https://github.com/bab2min/EigenRand && cd EigenRand && \
+  cmake -Bbuild -H. -DCMAKE_BUILD_TYPE=Release \
+   -DEIGENRAND_BUILD_TEST=off && cmake --build build/ --target install && \
+  cd ..

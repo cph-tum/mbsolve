@@ -25,20 +25,27 @@ string(REPLACE "-O2" "-O3" CMAKE_CXX_FLAGS_RELWITHDEBINFO
   "${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
 
 set(SRC_BASE_CPU ${CMAKE_CURRENT_SOURCE_DIR})
+
+set(sources_solver_cpu  ${sources_solver_cpu} ${SRC_BASE_CPU}/include/mbsolve/solver-cpu/internal/common_cpu.hpp
+${SRC_BASE_CPU}/include/mbsolve/solver-cpu/solver_cpu_fdtd.hpp
+${SRC_BASE_CPU}/include/mbsolve/solver-cpu/solver_cpu_fdtd_red.hpp
+${SRC_BASE_CPU}/include/mbsolve/solver-cpu/solver_cpu_fdtd.tpp
+${SRC_BASE_CPU}/include/mbsolve/solver-cpu/solver_cpu_fdtd_red.tpp
+${SRC_BASE_CPU}/include/mbsolve/solver-cpu/solver_cpu_loader.hpp
+${SRC_BASE_CPU}/src/solver_cpu_fdtd_noop.cpp
+${SRC_BASE_CPU}/src/solver_cpu_fdtd_red_noop.cpp
+${SRC_BASE_CPU}/src/solver_cpu_fdtd_cvr_rodr.cpp
+${SRC_BASE_CPU}/src/solver_cpu_fdtd_red_cvr_rodr.cpp
+${SRC_BASE_CPU}/src/solver_cpu_fdtd_reg_cayley.cpp
+${SRC_BASE_CPU}/src/solver_cpu_fdtd_red_reg_cayley.cpp
+${SRC_BASE_CPU}/src/solver_cpu_loader.cpp)
+
+if(WITH_CPU_NOISE)
+  set(sources_solver_cpu ${sources_solver_cpu} ${SRC_BASE_CPU}/src/solver_cpu_fdtd_reg_cayley_qnoise.cpp)
+endif()
+
 add_library(solver-cpu
-  ${SRC_BASE_CPU}/include/mbsolve/solver-cpu/internal/common_cpu.hpp
-  ${SRC_BASE_CPU}/include/mbsolve/solver-cpu/solver_cpu_fdtd.hpp
-  ${SRC_BASE_CPU}/include/mbsolve/solver-cpu/solver_cpu_fdtd_red.hpp
-  ${SRC_BASE_CPU}/include/mbsolve/solver-cpu/solver_cpu_fdtd.tpp
-  ${SRC_BASE_CPU}/include/mbsolve/solver-cpu/solver_cpu_fdtd_red.tpp
-  ${SRC_BASE_CPU}/include/mbsolve/solver-cpu/solver_cpu_loader.hpp
-  ${SRC_BASE_CPU}/src/solver_cpu_fdtd_noop.cpp
-  ${SRC_BASE_CPU}/src/solver_cpu_fdtd_red_noop.cpp
-  ${SRC_BASE_CPU}/src/solver_cpu_fdtd_cvr_rodr.cpp
-  ${SRC_BASE_CPU}/src/solver_cpu_fdtd_red_cvr_rodr.cpp
-  ${SRC_BASE_CPU}/src/solver_cpu_fdtd_reg_cayley.cpp
-  ${SRC_BASE_CPU}/src/solver_cpu_fdtd_red_reg_cayley.cpp
-  ${SRC_BASE_CPU}/src/solver_cpu_loader.cpp)
+  ${sources_solver_cpu})
 set_target_properties(solver-cpu PROPERTIES
   CXX_STANDARD 11
   VERSION ${VERSION_CORE}
@@ -81,6 +88,13 @@ target_include_directories(solver-cpu PUBLIC
 target_link_libraries(solver-cpu
   PRIVATE Eigen3::Eigen ${OpenMP_CXX_LIBRARIES}
   PUBLIC mbsolve-lib)
+
+# If solver instances including noise treatment should be compiled, 
+# the preprocessor directive is set to 1.
+if(WITH_CPU_NOISE)
+  target_compile_options(solver-cpu PRIVATE  "-DWITH_NOISE=1")
+  target_link_libraries(solver-cpu PRIVATE EigenRand)
+endif()
 
 if(MBSOLVE_PYTHON)
   set_property(SOURCE swig/solvercpu.i PROPERTY CPLUSPLUS ON)
