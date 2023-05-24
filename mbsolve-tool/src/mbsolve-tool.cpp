@@ -223,9 +223,10 @@ main(int argc, char** argv)
             auto ic_d = std::make_shared<mbsolve::ic_density_const>(rho_init);
             auto ic_e = std::make_shared<mbsolve::ic_field_const>(0.0);
             auto ic_m = std::make_shared<mbsolve::ic_field_const>(0.0);
+            auto ic_p = std::make_shared<mbsolve::ic_field_const>(0.0);
 
             scen = std::make_shared<mbsolve::scenario>(
-                "Basic", 1, sim_endtime, ic_d, ic_e, ic_m, 10000);
+                "Basic", 1, sim_endtime, ic_d, ic_e, ic_m, ic_p, 10000);
 
             auto sech_pulse = std::make_shared<mbsolve::sech_pulse>(
                 "sech",

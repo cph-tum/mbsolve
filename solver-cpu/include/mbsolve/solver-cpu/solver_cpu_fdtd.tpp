@@ -139,18 +139,19 @@ solver_cpu_fdtd<num_lvl, density_algo>::solver_cpu_fdtd(
         /* initialization */
         if (has_qm) {
             auto ic_dm = scen->get_ic_density();
-            m_d[i] = density_algo<num_lvl>::get_density(ic_dm->initialize(x));
+            m_d[i] = density_algo<num_lvl>::get_density(ic_dm->initialize(i));
         } else {
             m_d[i] = density_algo<num_lvl>::get_density();
         }
         auto ic_e = scen->get_ic_electric();
         auto ic_h = scen->get_ic_magnetic();
-        m_e[i] = ic_e->initialize(x);
-        m_h[i] = ic_h->initialize(x);
+        m_e[i] = ic_e->initialize(i);
+        m_h[i] = ic_h->initialize(i);
         if (i == scen->get_num_gridpoints() - 1) {
             m_h[i + 1] = 0.0;
         }
-        m_p[i] = 0.0;
+        auto ic_p = scen->get_ic_polarization();
+        m_p[i] = ic_p->initialize(i);
     }
 
     /* set up results and transfer data structures */

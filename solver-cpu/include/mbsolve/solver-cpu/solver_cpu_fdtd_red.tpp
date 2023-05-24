@@ -172,15 +172,16 @@ solver_cpu_fdtd_red<num_lvl, density_algo>::solver_cpu_fdtd_red(
                 if (has_qm) {
                     auto ic_dm = scen->get_ic_density();
                     m_d[tid][i] = density_algo<num_lvl>::get_density(
-                        ic_dm->initialize(x));
+                        ic_dm->initialize(global_idx));
                 } else {
                     m_d[tid][i] = density_algo<num_lvl>::get_density();
                 }
                 auto ic_e = scen->get_ic_electric();
                 auto ic_h = scen->get_ic_magnetic();
-                m_e[tid][i] = ic_e->initialize(x);
-                m_h[tid][i] = ic_h->initialize(x);
-                m_p[tid][i] = 0.0;
+                auto ic_p = scen->get_ic_polarization();
+                m_e[tid][i] = ic_e->initialize(global_idx);
+                m_h[tid][i] = ic_h->initialize(global_idx);
+                m_p[tid][i] = ic_p->initialize(global_idx);
                 m_fac_a[tid][i] = m_sim_consts_fdtd[mat_idx].fac_a;
                 m_fac_b[tid][i] = m_sim_consts_fdtd[mat_idx].fac_b;
                 m_fac_c[tid][i] = m_sim_consts_fdtd[mat_idx].fac_c;

@@ -36,6 +36,7 @@ scenario::scenario(
         std::make_shared<ic_density_const>(rho_init),
         std::make_shared<ic_field_random>(),
         std::make_shared<ic_field_const>(0),
+        std::make_shared<ic_field_const>(0),
         num_timesteps)
 {}
 
@@ -46,10 +47,12 @@ scenario::scenario(
     std::shared_ptr<ic_density> density_init,
     std::shared_ptr<ic_field> electric_init,
     std::shared_ptr<ic_field> magnetic_init,
+    std::shared_ptr<ic_field> polarization_init,
     unsigned int num_timesteps)
   : m_name(name), m_num_gridpoints(num_gridpoints), m_endtime(endtime),
     m_dens_init(density_init), m_e_init(electric_init),
-    m_h_init(magnetic_init), m_num_timesteps(num_timesteps)
+    m_h_init(magnetic_init), m_p_init(polarization_init),
+    m_num_timesteps(num_timesteps)
 {}
 
 void
@@ -176,5 +179,17 @@ void
 scenario::set_ic_magnetic(std::shared_ptr<ic_field> magnetic_init)
 {
     m_h_init = magnetic_init;
+}
+
+std::shared_ptr<ic_field>
+scenario::get_ic_polarization() const
+{
+    return m_p_init;
+}
+
+void
+scenario::set_ic_polarization(std::shared_ptr<ic_field> polarization_init)
+{
+    m_p_init = polarization_init;
 }
 }

@@ -41,9 +41,9 @@ class ic_density
 {
 public:
     /**
-     * Returns initial density matrix for given position x.
+     * Returns initial density matrix for given index i.
      */
-    virtual qm_operator initialize(real x) = 0;
+    virtual qm_operator initialize(int i) = 0;
 };
 
 /**
@@ -74,7 +74,36 @@ public:
     /**
      * Returns initial density matrix (independent of position).
      */
-    qm_operator initialize(real /* x */) { return m_rho; }
+    qm_operator initialize(int /* i */) { return m_rho; }
+};
+
+/**
+ * Represents initial conditions of the density matrix that are retrieved
+ * from the autosave file.
+ * \ingroup MBSOLVE_LIB
+ */
+class ic_density_autosave : public ic_density
+{
+private:
+    std::vector<std::shared_ptr<qm_operator> > m_rho;
+
+public:
+    /**
+     * Constructs constant initial conditions from given initial density
+     * matrix vector \p rho.
+     *
+     * \param [in] rho   Initial density matrix vector.
+     */
+    explicit ic_density_autosave(
+        const std::vector<std::shared_ptr<qm_operator> > rho)
+      : m_rho(rho)
+    {
+    }
+
+    /**
+     * Returns initial density matrix at index i.
+     */
+    qm_operator initialize(int i) { return *m_rho.at(i); }
 };
 
 /**
@@ -86,9 +115,9 @@ class ic_field
 {
 public:
     /**
-     * Returns initial field value for given position x.
+     * Returns initial field value for given index i.
      */
-    virtual real initialize(real x) = 0;
+    virtual real initialize(int i) = 0;
 };
 
 /**
@@ -113,7 +142,34 @@ public:
     /**
      * Returns initial field value (independent of position).
      */
-    real initialize(real /* x */) { return m_field_value; }
+    real initialize(int /* i */) { return m_field_value; }
+};
+
+/**
+ * Represents initial conditions of a field (electric or magnetic) that are
+ * retrieved from the autosave file. \ingroup MBSOLVE_LIB
+ */
+class ic_field_autosave : public ic_field
+{
+private:
+    std::vector<real> m_field;
+
+public:
+    /**
+     * Constructs initial conditions from given initial vector
+     * \p field.
+     *
+     * \param [in] field   Initial field vector.
+     */
+    explicit ic_field_autosave(const std::vector<real>& field)
+      : m_field(field)
+    {
+    }
+
+    /**
+     * Returns initial field value at index i.
+     */
+    real initialize(int i) { return m_field.at(i); }
 };
 
 /**
@@ -153,7 +209,7 @@ public:
     /**
      * Returns random initial field value.
      */
-    real initialize(real /* x */) { return m_dis(m_rand_gen) * m_amplitude; }
+    real initialize(int /* i */) { return m_dis(m_rand_gen) * m_amplitude; }
 };
 
 /**
@@ -185,6 +241,9 @@ private:
 
     /* initial conditions for magnetic field */
     std::shared_ptr<ic_field> m_h_init;
+
+    /* initial conditions for polarization */
+    std::shared_ptr<ic_field> m_p_init;
 
     /* initial conditions for electric field */
     std::shared_ptr<ic_field> m_e_init;
@@ -225,6 +284,8 @@ public:
         std::shared_ptr<ic_field> electric_init =
             std::make_shared<ic_field_random>(),
         std::shared_ptr<ic_field> magnetic_init =
+            std::make_shared<ic_field_const>(0),
+        std::shared_ptr<ic_field> polarization_init =
             std::make_shared<ic_field_const>(0),
         unsigned int num_timesteps = 2);
 
@@ -332,6 +393,16 @@ public:
      * Sets initial conditions for magnetic field.
      */
     void set_ic_magnetic(std::shared_ptr<ic_field> magnetic_init);
+
+    /**
+     * Gets initial conditions for polarization,
+     */
+    std::shared_ptr<ic_field> get_ic_polarization() const;
+
+    /**
+     * Sets initial conditions for polarization;
+     */
+    void set_ic_polarization(std::shared_ptr<ic_field> polarization_init);
 };
 }
 
