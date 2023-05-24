@@ -131,6 +131,7 @@ The following software packages are required to build the project:
  - cxxopts (any recent version) for mbsolve-tool
  - CMake >= 3.9
  - Eigen library >= 3.3.4
+ - EigenRand >= 0.5.0
  - HDF5 (any recent version) for the writer-hdf and reader-hdf
  - Highfive >= 2.7.1 as C++11 friendly interface for libhdf5
  - Python >= 2.7 and SWIG >= 2.0.12 for Python support

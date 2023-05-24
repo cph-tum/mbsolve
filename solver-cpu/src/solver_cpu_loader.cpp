@@ -23,6 +23,9 @@
 #include <mbsolve/lib/internal/algo_lindblad_cvr_rodr.hpp>
 #include <mbsolve/lib/internal/algo_lindblad_noop.hpp>
 #include <mbsolve/lib/internal/algo_lindblad_reg_cayley.hpp>
+#if WITH_NOISE
+#include <mbsolve/lib/internal/algo_lindblad_reg_cayley_qnoise.hpp>
+#endif
 #include <mbsolve/solver-cpu/solver_cpu_fdtd.hpp>
 #include <mbsolve/solver-cpu/solver_cpu_fdtd_red.hpp>
 #include <mbsolve/solver-cpu/solver_cpu_loader.hpp>
@@ -75,6 +78,19 @@ solver_cpu_loader::solver_cpu_loader()
     solver::register_solver<solver_cpu_fdtd<6, lindblad_reg_cayley> >(
         "cpu-fdtd-6lvl-reg-cayley");
 
+#if WITH_NOISE
+    /* fdtd regular representation/cayley approximation + noise */
+    solver::register_solver<solver_cpu_fdtd<2, lindblad_reg_cayley_qnoise> >(
+        "cpu-fdtd-2lvl-reg-cayley-qnoise");
+    solver::register_solver<solver_cpu_fdtd<3, lindblad_reg_cayley_qnoise> >(
+        "cpu-fdtd-3lvl-reg-cayley-qnoise");
+    solver::register_solver<solver_cpu_fdtd<4, lindblad_reg_cayley_qnoise> >(
+        "cpu-fdtd-4lvl-reg-cayley-qnoise");
+    solver::register_solver<solver_cpu_fdtd<5, lindblad_reg_cayley_qnoise> >(
+        "cpu-fdtd-5lvl-reg-cayley-qnoise");
+    solver::register_solver<solver_cpu_fdtd<6, lindblad_reg_cayley_qnoise> >(
+        "cpu-fdtd-6lvl-reg-cayley-qnoise");
+#endif
     /* fdtd-red regular representation/cayley approximation */
     solver::register_solver<solver_cpu_fdtd_red<2, lindblad_reg_cayley> >(
         "cpu-fdtd-red-2lvl-reg-cayley");
