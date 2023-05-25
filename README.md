@@ -16,7 +16,9 @@ The project consists of the following components:
    Maxwell-Bloch equations while the writer class writes the results to a
    file of the respective format. It also provides classes to describe a
    device setup (materials, dimensions, ...) and a simulation scenario
-   (simulation settings, sources, ...).
+   (simulation settings, sources, ...). Furtermore, a 
+   class reader ist included to load autosaved simulation data to restart the simulation from a 
+   specific timestep.
 
  - mbsolve-tool: A C++ test application that implements various simulation
    setups.
@@ -31,6 +33,9 @@ The project consists of the following components:
  - tools: Various scripts in different scripting languages.
 
  - writer-hdf5: Writes the results into the HDF5 format.
+
+ - reader-hdf5: Loads simulation data from the HDF5 format.
+
 
 All libraries feature a Python interface and can be used conveniently from
 Python scripts, Jupyter notebooks etc. See tools/python for examples.
@@ -126,7 +131,8 @@ The following software packages are required to build the project:
  - cxxopts (any recent version) for mbsolve-tool
  - CMake >= 3.9
  - Eigen library >= 3.3.4
- - HDF5 (any recent version) for the writer-hdf5
+ - HDF5 (any recent version) for the writer-hdf and reader-hdf
+ - Highfive >= 2.7.1 as C++11 friendly interface for libhdf5
  - Python >= 2.7 and SWIG >= 2.0.12 for Python support
  - CUDA >= 7.0 for solver-cuda
  - OpenMP (see supported compilers) for solver-cpu
