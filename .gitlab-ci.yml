@@ -5,29 +5,25 @@ stages:
 
 .build_image_debian_docker: &build_image_debian_docker_definition
   tags:
-   - docker
-   - linux
+   - xlarge
   before_script:
    - ./tools/ci/setup_buildenv_debian.sh
 
 .runtime_image_debian_docker: &runtime_image_debian_docker_definition
   tags:
-   - docker
-   - linux
+   - xlarge
   before_script:
    - ./tools/ci/setup_runtime_debian.sh
 
 .build_image_intel_oneapi_docker: &build_image_intel_oneapi_docker_definition
   tags:
-   - docker
-   - linux
+   - xlarge
   before_script:
    - ./tools/ci/setup_buildenv_intel.sh
 
 .runtime_image_intel_oneapi_docker: &runtime_image_intel_oneapi_docker_definition
   tags:
-   - docker
-   - linux
+   - xlarge
   before_script:
    - ./tools/ci/setup_runtime_intel.sh
 
@@ -44,7 +40,7 @@ stages:
    - cd build
    - cmake $CMAKE_FLAGS -DWITH_TESTS=ON
        -DCMAKE_INSTALL_PREFIX=$PREFIX -DCMAKE_PREFIX_PATH=$PREFIX ..
-   - cmake --build .
+   - cmake --build . --parallel 16
    - cmake --build . --target install
   artifacts:
     paths:
