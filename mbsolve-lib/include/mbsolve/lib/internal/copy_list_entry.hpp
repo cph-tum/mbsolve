@@ -156,7 +156,7 @@ public:
 
         /* create result */
         m_result = std::make_shared<result>(
-            rec->get_name(), m_dev.m_cols, m_dev.m_rows);
+            rec->get_name(), m_dev.m_cols, m_dev.m_rows, rec->is_complex());
 
         m_dev.m_type = rec->get_type();
         m_dev.m_timestep = scen->get_timestep_size();

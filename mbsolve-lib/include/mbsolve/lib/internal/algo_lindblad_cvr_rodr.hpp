@@ -285,6 +285,17 @@ public:
     }
 
     /*
+     * Returns the coherence specified by \param row_idx and \param col_idx
+     * (zero-based).
+     */
+    static inline std::complex<real>
+    calc_coherence(const density& d, unsigned int ridx, unsigned int cidx)
+    {
+        unsigned int m = cidx * (cidx - 1) / 2 + ridx;
+        return cv_representation::calc_off_diag<num_lvl, vec_len>(d, m);
+    }
+
+    /*
      * Converts the density matrix \param op into the coherence vector
      * representation.
      */

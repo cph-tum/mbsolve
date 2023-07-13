@@ -295,6 +295,12 @@ public:
         return d(idx, idx).real();
     }
 
+    static inline std::complex<real>
+    calc_coherence(const density& d, unsigned int ridx, unsigned int cidx)
+    {
+        return d(ridx, cidx);
+    }
+
     static inline density get_density(const qm_operator& op)
     {
         return convert_qm_operator(op);

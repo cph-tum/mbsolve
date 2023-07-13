@@ -73,6 +73,12 @@ public:
         return 0;
     }
 
+    static inline std::complex<real>
+    calc_coherence(const density& d, unsigned int ridx, unsigned int cidx)
+    {
+        return std::complex<real>(0, 0);
+    }
+
     static inline density get_density()
     {
         /* return empty density */
@@ -84,7 +90,12 @@ public:
         return get_density();
     }
 
-        static inline qm_operator convert_density(const density& d)
+    static inline density get_density(const density& /* op -- unused*/)
+    {
+        return get_density();
+    }
+
+    static inline qm_operator convert_density(const density& d)
     {
         return qm_operator({0});
     }
