@@ -292,6 +292,7 @@ solver_cpu_fdtd<num_lvl, density_algo>::run() const
                     uint64_t cols = cle.get_cols();
                     record::type t = cle.get_type();
                     uint64_t o_r = cle.get_offset_scratch_real(n, 0);
+                    uint64_t o_i = cle.get_offset_scratch_imag(n, 0);
                     unsigned int cidx = cle.get_col_idx();
                     unsigned int ridx = cle.get_row_idx();
 
@@ -307,15 +308,20 @@ solver_cpu_fdtd<num_lvl, density_algo>::run() const
                             m_result_scratch[o_r + i - pos] =
                                 density_algo<num_lvl>::calc_inversion(m_d[i]);
                         } else if (t == record::type::density) {
-                            /* right now only populations */
                             if (ridx == cidx) {
+                                /* population terms */
                                 m_result_scratch[o_r + i - pos] =
                                     density_algo<num_lvl>::calc_population(
                                         m_d[i], ridx);
                             } else {
                                 /* coherence terms */
-
-                                /* TODO */
+                                std::complex<real> coherence =
+                                    density_algo<num_lvl>::calc_coherence(
+                                        m_d[i], ridx, cidx);
+                                m_result_scratch[o_r + i - pos] =
+                                    coherence.real();
+                                m_result_scratch[o_i + i - pos] =
+                                    coherence.imag();
                             }
                         } else {
                             /* TODO handle trouble */

@@ -501,6 +501,9 @@ solver_cpu_fdtd_red<num_lvl, density_algo>::run() const
                         int64_t off_r =
                             m_copy_list[k].get_offset_scratch_real(
                                 n * OL + m, base_idx - pos);
+                        int64_t off_i =
+                            m_copy_list[k].get_offset_scratch_imag(
+                                n * OL + m, base_idx - pos);
 
                         /* TODO switch instead if else
                          * exchange type switch and for loop
@@ -523,16 +526,21 @@ solver_cpu_fdtd_red<num_lvl, density_algo>::run() const
                                             t_d[i]);
 
                                 } else if (t == record::type::density) {
-
-                                    /* right now only populations */
+                                    /* population terms */
                                     if (ridx == cidx) {
                                         m_result_scratch[off_r + i] =
                                             density_algo<num_lvl>::
                                                 calc_population(t_d[i], ridx);
                                     } else {
                                         /* coherence terms */
-
-                                        /* TODO */
+                                        std::complex<real> coherence =
+                                            density_algo<num_lvl>::
+                                                calc_coherence(
+                                                    t_d[i], ridx, cidx);
+                                        m_result_scratch[off_r + i] =
+                                            coherence.real();
+                                        m_result_scratch[off_i + i] =
+                                            coherence.imag();
                                     }
 
                                     /* TODO: coherences
