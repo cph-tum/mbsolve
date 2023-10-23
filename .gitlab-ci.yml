@@ -184,14 +184,14 @@ test-py-examples-clang:
 build-intel-oneapi:
   variables:
     CMAKE_FLAGS: "-DCMAKE_C_COMPILER=icc -DCMAKE_CXX_COMPILER=icpc"
-  image: intel/oneapi-hpckit:latest
+  image: intel/oneapi-hpckit:devel-ubuntu22.04
   <<: *build_image_intel_oneapi_docker_definition
   <<: *build_definition_make
 
 test-cpp-examples-intel:
   # only:
   #  - master
-  image: intel/oneapi-hpckit:latest
+  image: intel/oneapi-hpckit:devel-ubuntu22.04
   <<: *runtime_image_intel_oneapi_docker_definition
   dependencies:
    - build-intel-oneapi
@@ -200,7 +200,7 @@ test-cpp-examples-intel:
 test-py-examples-intel:
   # only:
   #  - master
-  image: intel/oneapi-hpckit:latest
+  image: intel/oneapi-hpckit:devel-ubuntu22.04
   <<: *runtime_image_intel_oneapi_docker_definition
   dependencies:
    - build-intel-oneapi
