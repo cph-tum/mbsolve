@@ -7,6 +7,19 @@ The format is based on
 and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## noise-implementation - 2023-10-01
+
+Add fdtd solver for the modeling of quantum fluctuations.
+
+### Added
+- The preprocessor directive 'WITH_NOISE' is added: If set to 1,
+  solver instances including the noise treatment are added as cmake targets.
+
+### Changed
+- Interface change in qm_description: We add an input argument 
+  'num_carrier_cell' to the qm_description constructor, which sets the 
+   number of particles in a volume presented by one grid cell of the system.
+
 ## [0.4.0] - 2020-xx-xx
 
 Forth unstable version.
