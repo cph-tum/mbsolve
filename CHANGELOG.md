@@ -20,6 +20,22 @@ Add fdtd solver for the modeling of quantum fluctuations.
   'num_carrier_cell' to the qm_description constructor, which sets the 
    number of particles in a volume presented by one grid cell of the system.
 
+## Autosave/restart simulation - 2023-07-14
+
+### Added
+- Modern C++14 wrapper Highfive for libhdf5.
+- Class sim_data, store field and density matrix values of last 
+  simulation timestep.
+- Method autosave in abstract writer class with implementation for HDF5.
+- New abstract class reader and HDF5 implementation.
+- Initial conditions for fields/density matrix,
+  simulation data retrieved from the autosave file.
+### Changed
+- Scenario constructor extended by input argument for initial conditions 
+  for polarization.
+- Data concept in write method, simulation meta-informations are stored 
+  in a group setup, divided into two datasets: scenario and device.
+
 ## [0.4.0] - 2020-xx-xx
 
 Forth unstable version.
